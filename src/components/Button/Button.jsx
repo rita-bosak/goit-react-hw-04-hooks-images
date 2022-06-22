@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Button = () => {
-  return <div className="load-more-btn"></div>;
+  return <button className="load-more-btn">Load more</button>;
 };
 
 export default Button;

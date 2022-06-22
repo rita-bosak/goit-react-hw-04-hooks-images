@@ -10,18 +10,15 @@ export default class App extends React.Component {
     imageName: '',
   };
 
-  handleImageName = e => {
-    this.setState({ imageName: e.currentTarget.value });
+  handleImageName = searchingImage => {
+    this.setState({ imageName: searchingImage });
   };
 
   render() {
     return (
       <>
-        <Searchbar
-          value={this.state.imageName}
-          onChange={this.handleImageName}
-        />
-        <ImageGallery />
+        <Searchbar onSubmit={this.handleImageName} />
+        <ImageGallery imageName={this.state.imageName} />
         <Button />
         <Loader />
         <Modal />
