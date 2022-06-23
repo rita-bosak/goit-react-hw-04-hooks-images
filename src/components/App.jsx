@@ -6,13 +6,14 @@ import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
 import { AppStyle } from './App.styled';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import Message from './Message/Message';
 
 export default class App extends React.Component {
   state = {
     imageName: '',
     images: null,
     page: 1,
-    loading: false,
+    isLoading: false,
     modalImage: null,
     showModal: false,
   };
@@ -22,7 +23,7 @@ export default class App extends React.Component {
     const nextName = this.state.imageName;
 
     if (prevName !== nextName) {
-      this.setState({ loading: true, page: 1 });
+      this.setState({ isLoading: true, page: 1 });
       fetch(
         `https://pixabay.com/api/?q=${nextName}&page=1&key=28210864-97c5f22d502fc1ab47943acf9&image_type=photo&orientation=horizontal&per_page=12`
       )
@@ -32,7 +33,7 @@ export default class App extends React.Component {
         })
         .finally(() =>
           this.setState(prevState => {
-            return { loading: false, page: (prevState.page += 1) };
+            return { isLoading: false, page: (prevState.page += 1) };
           })
         );
     }
@@ -67,20 +68,35 @@ export default class App extends React.Component {
     });
   };
 
+  handleModalClose = () => {
+    this.setState({ showModal: false });
+  };
+
   render() {
-    const { images, loading, showModal } = this.state;
+    const { images, isLoading, showModal } = this.state;
 
     return (
       <AppStyle>
         <Searchbar onSubmit={this.handleImageName} />
+        {images && images.length === 0 && (
+          <Message
+            message="We can`t find pictures by this name. Please check your search
+            request"
+          />
+        )}
         {images && (
-          <ImageGallery onClick={this.handleClickImage} images={images} />
+          <ImageGallery images={images} onClick={this.handleClickImage} />
         )}
         {images && images.length >= 12 && (
           <Button onClick={this.handleLoadMoreBtn} />
         )}
-        {loading && <Loader />}
-        {showModal && <Modal modalImage={this.state.modalImage} />}
+        {isLoading && <Loader />}
+        {showModal && (
+          <Modal
+            modalImage={this.state.modalImage}
+            onClose={this.handleModalClose}
+          />
+        )}
       </AppStyle>
     );
   }

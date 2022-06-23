@@ -6,9 +6,7 @@ import {
 
 export default class ImageGalleryItem extends React.Component {
   handleClick = e => {
-    if (e.target === e.currentTarget) {
-      return this.props.onClick(this.props.image.id);
-    }
+    this.props.onClick(this.props.image.id);
   };
 
   render() {
