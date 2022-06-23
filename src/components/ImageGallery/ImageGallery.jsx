@@ -1,5 +1,6 @@
 import React from 'react';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import { ImageGalleryStyle } from './ImageGallery.styled';
 
 export default class ImageGallery extends React.Component {
   state = {
@@ -25,11 +26,11 @@ export default class ImageGallery extends React.Component {
   render() {
     return (
       this.state.images && (
-        <ul className="gallery">
+        <ImageGalleryStyle>
           {this.state.images.map(image => (
             <ImageGalleryItem image={image} key={image.id} />
           ))}
-        </ul>
+        </ImageGalleryStyle>
       )
     );
   }

@@ -4,6 +4,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
+import { AppStyle } from './App.styled';
 
 export default class App extends React.Component {
   state = {
@@ -16,13 +17,13 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <>
+      <AppStyle>
         <Searchbar onSubmit={this.handleImageName} />
         <ImageGallery imageName={this.state.imageName} />
         <Button />
         <Loader />
-        <Modal />
-      </>
+        {/* <Modal /> */}
+      </AppStyle>
     );
   }
 }

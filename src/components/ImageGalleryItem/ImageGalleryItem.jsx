@@ -1,11 +1,16 @@
+import { ImageGalleryStyle } from 'components/ImageGallery/ImageGallery.styled';
 import React from 'react';
+import { ImageGalleryItemImage } from './ImageGalleryItem.styled';
 
 export default class ImageGallery extends React.Component {
   render() {
     return (
-      <li className="gallery-item">
-        <img src={this.props.image.webformatURL} alt={this.props.image.tags} />
-      </li>
+      <ImageGalleryStyle>
+        <ImageGalleryItemImage
+          src={this.props.image.webformatURL}
+          alt={this.props.image.tags}
+        />
+      </ImageGalleryStyle>
     );
   }
 }

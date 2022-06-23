@@ -1,7 +1,8 @@
 import React from 'react';
+import { ButtonStyle } from './Button.styled';
 
 const Button = () => {
-  return <button className="load-more-btn">Load more</button>;
+  return <ButtonStyle className="load-more-btn">Load more</ButtonStyle>;
 };
 
 export default Button;
