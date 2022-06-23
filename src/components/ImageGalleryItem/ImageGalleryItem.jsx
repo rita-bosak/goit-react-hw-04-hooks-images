@@ -1,15 +1,27 @@
-import { ImageGalleryStyle } from 'components/ImageGallery/ImageGallery.styled';
 import React from 'react';
-import { ImageGalleryItemImage } from './ImageGalleryItem.styled';
+import {
+  ImageGalleryItemStyle,
+  ImageGalleryItemImage,
+} from './ImageGalleryItem.styled';
 
-export default class ImageGallery extends React.Component {
+export default class ImageGalleryItem extends React.Component {
+  handleClick = e => {
+    if (e.target === e.currentTarget) {
+      return this.props.onClick(this.props.image.id);
+    }
+  };
+
   render() {
     const { webformatURL, tags } = this.props.image;
 
     return (
-      <ImageGalleryStyle>
-        <ImageGalleryItemImage src={webformatURL} alt={tags} />
-      </ImageGalleryStyle>
+      <ImageGalleryItemStyle>
+        <ImageGalleryItemImage
+          src={webformatURL}
+          alt={tags}
+          onClick={this.handleClick}
+        />
+      </ImageGalleryItemStyle>
     );
   }
 }

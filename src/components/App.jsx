@@ -59,9 +59,11 @@ export default class App extends React.Component {
   };
 
   handleClickImage = imageId => {
-    this.state.images.find(image =>
-      this.setState({ modalImage: image.id === imageId })
-    );
+    const { images } = this.state;
+
+    this.setState({
+      modalImage: images.find(image => image.id === imageId),
+    });
 
     this.setState({ showModal: true });
   };

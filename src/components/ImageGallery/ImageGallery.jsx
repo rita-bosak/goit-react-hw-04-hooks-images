@@ -7,7 +7,11 @@ export default class ImageGallery extends React.Component {
     return (
       <ImageGalleryStyle>
         {this.props.images.map(image => (
-          <ImageGalleryItem image={image} key={image.id} />
+          <ImageGalleryItem
+            image={image}
+            key={image.id}
+            onClick={this.props.onClick}
+          />
         ))}
       </ImageGalleryStyle>
     );
