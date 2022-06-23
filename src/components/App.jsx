@@ -62,10 +62,9 @@ export default class App extends React.Component {
     const { images } = this.state;
 
     this.setState({
+      showModal: true,
       modalImage: images.find(image => image.id === imageId),
     });
-
-    this.setState({ showModal: true });
   };
 
   render() {
