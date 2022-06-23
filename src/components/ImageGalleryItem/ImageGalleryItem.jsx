@@ -4,12 +4,11 @@ import { ImageGalleryItemImage } from './ImageGalleryItem.styled';
 
 export default class ImageGallery extends React.Component {
   render() {
+    const { webformatURL, tags } = this.props.image;
+
     return (
       <ImageGalleryStyle>
-        <ImageGalleryItemImage
-          src={this.props.image.webformatURL}
-          alt={this.props.image.tags}
-        />
+        <ImageGalleryItemImage src={webformatURL} alt={tags} />
       </ImageGalleryStyle>
     );
   }
