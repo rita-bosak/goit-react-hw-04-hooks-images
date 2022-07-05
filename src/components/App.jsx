@@ -1,14 +1,14 @@
 import React from 'react';
+import axios from 'axios';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { API_KEY } from '../service/apiRequest';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
-import { AppStyle } from './App.styled';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Message from './Message/Message';
-import { API_KEY } from '../service/apiRequest';
-import axios from 'axios';
+import { AppStyle } from './App.styled';
 
 export default class App extends React.Component {
   state = {
