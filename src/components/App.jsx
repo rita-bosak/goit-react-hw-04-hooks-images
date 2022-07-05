@@ -7,6 +7,8 @@ import Modal from './Modal/Modal';
 import { AppStyle } from './App.styled';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Message from './Message/Message';
+import { API_KEY } from '../service/apiRequest';
+import axios from 'axios';
 
 export default class App extends React.Component {
   state = {
@@ -16,43 +18,55 @@ export default class App extends React.Component {
     isLoading: false,
     modalImage: null,
     showModal: false,
+    showBtn: false,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const prevName = prevState.imageName;
     const nextName = this.state.imageName;
 
-    if (prevName !== nextName) {
-      this.setState({ isLoading: true, page: 1 });
-      fetch(
-        `https://pixabay.com/api/?q=${nextName}&page=1&key=28210864-97c5f22d502fc1ab47943acf9&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(response => response.json())
-        .then(images => {
-          this.setState({ images: images.hits });
-        })
-        .finally(() =>
-          this.setState(prevState => {
-            return { isLoading: false, page: (prevState.page += 1) };
-          })
-        );
+    if (prevName !== nextName && nextName !== '') {
+      this.setState({ page: 1, isLoading: true, showBtn: false });
+
+      const response = await axios.get(
+        `/?q=${nextName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+      );
+
+      const responseData = response.data.hits;
+
+      if (responseData.length >= 12) {
+        this.setState({ showBtn: true });
+      }
+
+      this.setState(prevState => {
+        return {
+          images: responseData,
+          isLoading: false,
+          page: (prevState.page += 1),
+        };
+      });
     }
   }
 
-  handleLoadMoreBtn = () => {
-    this.setState(prevState => {
-      return { page: (prevState.page += 1) };
-    });
+  handleLoadMoreBtn = async () => {
+    const { imageName, page } = this.state;
 
-    fetch(
-      `https://pixabay.com/api/?q=${this.state.imageName}&page=${this.state.page}&key=28210864-97c5f22d502fc1ab47943acf9&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then(response => response.json())
-      .then(images =>
-        this.setState(prevState => {
-          return { images: [...prevState.images, ...images.hits] };
-        })
-      );
+    const response = await axios.get(
+      `/?q=${imageName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+    );
+
+    const responseData = response.data.hits;
+
+    if (responseData.length < 12) {
+      this.setState({ showBtn: false });
+    }
+
+    this.setState(prevState => {
+      return {
+        images: [...prevState.images, ...responseData],
+        page: (prevState.page += 1),
+      };
+    });
   };
 
   handleImageName = imageName => {
@@ -61,10 +75,11 @@ export default class App extends React.Component {
 
   handleClickImage = imageId => {
     const { images } = this.state;
+    const modalImage = images.find(image => image.id === imageId);
 
     this.setState({
       showModal: true,
-      modalImage: images.find(image => image.id === imageId),
+      modalImage: modalImage,
     });
   };
 
@@ -73,7 +88,7 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { images, isLoading, showModal } = this.state;
+    const { images, isLoading, showModal, showBtn } = this.state;
 
     return (
       <AppStyle>
@@ -87,9 +102,7 @@ export default class App extends React.Component {
         {images && (
           <ImageGallery images={images} onClick={this.handleClickImage} />
         )}
-        {images && images.length >= 12 && (
-          <Button onClick={this.handleLoadMoreBtn} />
-        )}
+        {showBtn && <Button onClick={this.handleLoadMoreBtn} />}
         {isLoading && <Loader />}
         {showModal && (
           <Modal

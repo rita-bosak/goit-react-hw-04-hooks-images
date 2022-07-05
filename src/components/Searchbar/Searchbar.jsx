@@ -19,7 +19,7 @@ export default class Searchbar extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.onSubmit(this.state.imageName);
+    this.props.onSubmit(this.state.imageName.trim());
   };
 
   render() {
