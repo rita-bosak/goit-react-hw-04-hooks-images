@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { API_KEY } from '../service/apiRequest';
@@ -10,107 +10,90 @@ import Modal from './Modal/Modal';
 import Message from './Message/Message';
 import { AppStyle } from './App.styled';
 
-export default class App extends React.Component {
-  state = {
-    imageName: '',
-    images: null,
-    page: 1,
-    isLoading: false,
-    modalImage: null,
-    showModal: false,
-    showBtn: false,
-  };
+const App = () => {
+  const [imageName, setImageName] = useState('');
+  const [images, setImages] = useState(null);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalImage, setModalImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showBtn, setShowBtn] = useState(false);
+  const [perPage, setPerPage] = useState(12);
 
-  async componentDidUpdate(prevProps, prevState) {
-    const prevName = prevState.imageName;
-    const nextName = this.state.imageName;
+  useEffect(() => {
+    if (imageName !== '') {
+      setIsLoading(true);
+      setPage(1);
+      setShowBtn(false);
 
-    if (prevName !== nextName && nextName !== '') {
-      this.setState({ page: 1, isLoading: true, showBtn: false });
+      const fetchData = async () => {
+        const response = await axios.get(
+          `/?q=${imageName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
+        );
 
-      const response = await axios.get(
-        `/?q=${nextName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-      );
+        const responseData = response.data.hits;
 
-      const responseData = response.data.hits;
+        if (responseData.length >= perPage) {
+          setShowBtn(true);
+        }
 
-      if (responseData.length >= 12) {
-        this.setState({ showBtn: true });
-      }
+        setImages(responseData);
+      };
 
-      this.setState(prevState => {
-        return {
-          images: responseData,
-          isLoading: false,
-          page: (prevState.page += 1),
-        };
-      });
+      fetchData();
+
+      setIsLoading(false);
+      setPage(state => (state += 1));
     }
-  }
+  }, [imageName, perPage]);
 
-  handleLoadMoreBtn = async () => {
-    const { imageName, page } = this.state;
-
+  const handleLoadMoreBtn = async () => {
     const response = await axios.get(
-      `/?q=${imageName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+      `/?q=${imageName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
     );
 
     const responseData = response.data.hits;
 
-    if (responseData.length < 12) {
-      this.setState({ showBtn: false });
+    if (responseData.length < perPage) {
+      setShowBtn(false);
     }
 
-    this.setState(prevState => {
-      return {
-        images: [...prevState.images, ...responseData],
-        page: (prevState.page += 1),
-      };
-    });
+    setImages(state => [...state, ...responseData]);
+    setPage(state => (state += 1));
   };
 
-  handleImageName = imageName => {
-    this.setState({ imageName });
+  const handleImageName = imageName => {
+    setImageName(imageName);
   };
 
-  handleClickImage = imageId => {
-    const { images } = this.state;
+  const handleClickImage = imageId => {
     const modalImage = images.find(image => image.id === imageId);
 
-    this.setState({
-      showModal: true,
-      modalImage: modalImage,
-    });
+    setShowModal(true);
+    setModalImage(modalImage);
   };
 
-  handleModalClose = () => {
-    this.setState({ showModal: false });
+  const handleModalClose = () => {
+    setShowModal(false);
   };
 
-  render() {
-    const { images, isLoading, showModal, showBtn } = this.state;
-
-    return (
-      <AppStyle>
-        <Searchbar onSubmit={this.handleImageName} />
-        {images && images.length === 0 && (
-          <Message
-            message="We can`t find pictures by this name. Please check your search
+  return (
+    <AppStyle>
+      <Searchbar onSubmit={handleImageName} />
+      {images && images.length === 0 && (
+        <Message
+          message="We can`t find pictures by this name. Please check your search
             request"
-          />
-        )}
-        {images && (
-          <ImageGallery images={images} onClick={this.handleClickImage} />
-        )}
-        {showBtn && <Button onClick={this.handleLoadMoreBtn} />}
-        {isLoading && <Loader />}
-        {showModal && (
-          <Modal
-            modalImage={this.state.modalImage}
-            onClose={this.handleModalClose}
-          />
-        )}
-      </AppStyle>
-    );
-  }
-}
+        />
+      )}
+      {images && <ImageGallery images={images} onClick={handleClickImage} />}
+      {showBtn && <Button onClick={handleLoadMoreBtn} />}
+      {isLoading && <Loader />}
+      {showModal && (
+        <Modal modalImage={modalImage} onClose={handleModalClose} />
+      )}
+    </AppStyle>
+  );
+};
+
+export default App;
