@@ -18,7 +18,7 @@ const App = () => {
   const [modalImage, setModalImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showBtn, setShowBtn] = useState(false);
-  const [perPage, setPerPage] = useState(12);
+  const [perPage] = useState(12);
 
   useEffect(() => {
     if (imageName !== '') {
