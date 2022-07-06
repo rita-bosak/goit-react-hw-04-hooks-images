@@ -62,10 +62,6 @@ const App = () => {
     setPage(state => (state += 1));
   };
 
-  const handleImageName = imageName => {
-    setImageName(imageName);
-  };
-
   const handleClickImage = imageId => {
     const modalImage = images.find(image => image.id === imageId);
 
@@ -79,7 +75,7 @@ const App = () => {
 
   return (
     <AppStyle>
-      <Searchbar onSubmit={handleImageName} />
+      <Searchbar onSubmit={setImageName} />
       {images && images.length === 0 && (
         <Message
           message="We can`t find pictures by this name. Please check your search
