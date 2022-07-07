@@ -41,12 +41,12 @@ const App = () => {
       }
 
       setImages(responseData);
+      setPage(state => (state += 1));
     };
 
     fetchData();
 
     setIsLoading(false);
-    setPage(state => (state += 1));
   }, [imageName, perPage]);
 
   const handleLoadMoreBtn = async () => {
