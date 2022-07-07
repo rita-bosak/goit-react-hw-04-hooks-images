@@ -16,7 +16,6 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [modalImage, setModalImage] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [showBtn, setShowBtn] = useState(false);
   const [perPage] = useState(12);
 
@@ -67,12 +66,11 @@ const App = () => {
   const handleClickImage = imageId => {
     const modalImage = images.find(image => image.id === imageId);
 
-    setShowModal(true);
     setModalImage(modalImage);
   };
 
   const handleModalClose = () => {
-    setShowModal(false);
+    setModalImage(null);
   };
 
   return (
@@ -87,7 +85,7 @@ const App = () => {
       {images && <ImageGallery images={images} onClick={handleClickImage} />}
       {showBtn && <Button onClick={handleLoadMoreBtn} />}
       {isLoading && <Loader />}
-      {showModal && (
+      {modalImage && (
         <Modal modalImage={modalImage} onClose={handleModalClose} />
       )}
     </AppStyle>
