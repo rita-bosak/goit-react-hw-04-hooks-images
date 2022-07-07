@@ -21,30 +21,32 @@ const App = () => {
   const [perPage] = useState(12);
 
   useEffect(() => {
-    if (imageName !== '') {
-      setIsLoading(true);
-      setPage(1);
-      setShowBtn(false);
-
-      const fetchData = async () => {
-        const response = await axios.get(
-          `/?q=${imageName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-        );
-
-        const responseData = response.data.hits;
-
-        if (responseData.length >= perPage) {
-          setShowBtn(true);
-        }
-
-        setImages(responseData);
-      };
-
-      fetchData();
-
-      setIsLoading(false);
-      setPage(state => (state += 1));
+    if (imageName === '') {
+      return;
     }
+
+    setIsLoading(true);
+    setPage(1);
+    setShowBtn(false);
+
+    const fetchData = async () => {
+      const response = await axios.get(
+        `/?q=${imageName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
+      );
+
+      const responseData = response.data.hits;
+
+      if (responseData.length >= perPage) {
+        setShowBtn(true);
+      }
+
+      setImages(responseData);
+    };
+
+    fetchData();
+
+    setIsLoading(false);
+    setPage(state => (state += 1));
   }, [imageName, perPage]);
 
   const handleLoadMoreBtn = async () => {
