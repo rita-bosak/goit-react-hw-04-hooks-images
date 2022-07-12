@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_KEY } from '../../service/apiRequest';
 import ImageGallery from '../ImageGallery/ImageGallery';
+import ImageApi from '../../service/image-api';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Button from '../Button/Button';
 import Loader from '../Loader/Loader';
@@ -25,38 +24,24 @@ const GalleryView = ({ imageName }) => {
     setPage(1);
     setShowBtn(false);
 
-    const fetchData = async () => {
-      const response = await axios.get(
-        `/?q=${imageName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-      );
-
-      const responseData = response.data.hits;
-
-      if (responseData.length >= perPage) {
+    ImageApi.fetchImage(imageName, 1, perPage).then(response => {
+      setImages(response);
+      if (response.length >= perPage) {
         setShowBtn(true);
       }
-
-      setImages(responseData);
       setPage(state => (state += 1));
-    };
-
-    fetchData();
-
-    setIsLoading(false);
+      setIsLoading(false);
+    });
   }, [imageName, perPage]);
 
   const handleLoadMoreBtn = async () => {
-    const response = await axios.get(
-      `/?q=${imageName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-    );
+    ImageApi.fetchImage(imageName, page, perPage).then(response => {
+      if (response.length < perPage) {
+        setShowBtn(false);
+      }
 
-    const responseData = response.data.hits;
-
-    if (responseData.length < perPage) {
-      setShowBtn(false);
-    }
-
-    setImages(state => [...state, ...responseData]);
+      setImages(state => [...state, ...response]);
+    });
     setPage(state => (state += 1));
   };
 
