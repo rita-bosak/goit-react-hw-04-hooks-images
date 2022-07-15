@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import { API_KEY } from '../service/apiRequest';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -9,6 +7,7 @@ import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
 import Message from './Message/Message';
 import { AppStyle } from './App.styled';
+import ImageApi from 'service/image-api';
 
 const App = () => {
   const [imageName, setImageName] = useState('');
@@ -17,49 +16,31 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   const [showBtn, setShowBtn] = useState(false);
-  const [perPage] = useState(12);
+  const perPage = 12;
 
   useEffect(() => {
     if (imageName === '') {
       return;
     }
-
     setIsLoading(true);
-    setPage(1);
-    setShowBtn(false);
 
-    const fetchData = async () => {
-      const response = await axios.get(
-        `/?q=${imageName}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-      );
+    ImageApi.fetchImage(imageName, page, perPage).then(response => {
+      setIsLoading(false);
+      setShowBtn(response.length >= perPage ? true : false);
 
-      const responseData = response.data.hits;
-
-      if (responseData.length >= perPage) {
-        setShowBtn(true);
+      if (page === 1) {
+        return setImages(response);
       }
+      setImages(state => [...state, ...response]);
+    });
+  }, [imageName, page, perPage]);
 
-      setImages(responseData);
-      setPage(state => (state += 1));
-    };
-
-    fetchData();
-
-    setIsLoading(false);
-  }, [imageName, perPage]);
+  const handleSubmit = imageName => {
+    setImageName(imageName);
+    setPage(1);
+  };
 
   const handleLoadMoreBtn = async () => {
-    const response = await axios.get(
-      `/?q=${imageName}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-    );
-
-    const responseData = response.data.hits;
-
-    if (responseData.length < perPage) {
-      setShowBtn(false);
-    }
-
-    setImages(state => [...state, ...responseData]);
     setPage(state => (state += 1));
   };
 
@@ -75,7 +56,7 @@ const App = () => {
 
   return (
     <AppStyle>
-      <Searchbar onSubmit={setImageName} />
+      <Searchbar onSubmit={handleSubmit} />
       {images && images.length === 0 && (
         <Message
           message="We can`t find pictures by this name. Please check your search
