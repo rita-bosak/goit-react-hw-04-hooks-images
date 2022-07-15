@@ -13,12 +13,12 @@ const Searchbar = ({ onSubmit }) => {
 
   const handleNameChange = e => {
     e.preventDefault();
-    setImageName(e.currentTarget.value.toLowerCase());
+    setImageName(e.currentTarget.value);
   };
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit(imageName.trim());
+    onSubmit(imageName.toLowerCase().trim());
   };
 
   return (

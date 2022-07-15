@@ -35,9 +35,11 @@ const App = () => {
     });
   }, [imageName, page, perPage]);
 
-  const handleSubmit = imageName => {
-    setImageName(imageName);
-    setPage(1);
+  const handleSubmit = imageSubmitName => {
+    if (imageSubmitName !== imageName) {
+      setImageName(imageSubmitName);
+      setPage(1);
+    }
   };
 
   const handleLoadMoreBtn = async () => {
